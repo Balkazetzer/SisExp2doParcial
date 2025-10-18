@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clue: Perras - Simulador de Misterio</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>Clue: Perras</h1>
+        <p>María del Mar ha sido asesinada en el internado. Deduce quién lo hizo, dónde y con qué en máximo 10 turnos.</p>
+        <img id="dynamic-image" src="" alt="Imagen dinámica" class="hidden">
+
+        <div id="intro">
+            <button onclick="startGame()">Iniciar Partida</button>
+        </div>
+
+        <div id="game" class="hidden">
+            <div id="turn-info"></div>
+            <div id="actions">
+                <h3>Acciones (Turno <span id="current-turn">1</span>/10):</h3>
+                <div class="action-section">
+                    <button onclick="showInterrogation()">1. Interrogar Alumna</button>
+                </div>
+                <div class="action-section">
+                    <button onclick="showCameras()">2. Revisar Cámaras</button>
+                </div>
+                <div class="action-section">
+                    <button onclick="checkBackpacks()">3. Revisar Mochilas</button>
+                </div>
+                <div class="action-section">
+                    <button onclick="showVerdict()">4. Dar Veredicto</button>
+                </div>
+                <div class="action-section">
+                    <button onclick="exitGame()">5. Salir</button>
+                </div>
+            </div>
+            <div id="input-area" class="hidden">
+            </div>
+            <div id="output"></div>
+        </div>
+
+        <div id="verdict-area" class="hidden">
+            <h3>Tu Veredicto:</h3>
+            <select id="culpable-select">
+                <option value="">Selecciona culpable</option>
+                <option value="Sofía">Sofía</option>
+                <option value="Iris">Iris</option>
+                <option value="Ana Cecy">Ana Cecy</option>
+                <option value="Diana">Diana</option>
+                <option value="Andrea">Andrea</option>
+            </select><br>
+            <select id="locacion-select">
+                <option value="">Selecciona locación</option>
+                <option value="Baños">Baños</option>
+                <option value="Dirección">Dirección</option>
+                <option value="Patio de juegos">Patio de juegos</option>
+                <option value="Salón de clases">Salón de clases</option>
+                <option value="Escaleras">Escaleras</option>
+            </select><br>
+            <select id="arma-select">
+                <option value="">Selecciona arma</option>
+                <option value="Cutter">Cutter</option>
+                <option value="Pastillas abortivas">Pastillas abortivas</option>
+                <option value="Bastón">Bastón</option>
+                <option value="Pastillas para dormir">Pastillas para dormir</option>
+                <option value="Ganchito">Ganchito</option>
+            </select><br>
+            <button onclick="submitVerdict()">Confirmar</button>
+            <button onclick="backToGame()">Volver</button>
+        </div>
+
+        <div id="end-game" class="hidden">
+            <h2 id="end-title"></h2>
+            <p id="end-message"></p>
+            <button onclick="restartGame()">Nueva Partida</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
