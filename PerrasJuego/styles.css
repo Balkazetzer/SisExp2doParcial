@@ -5,8 +5,6 @@ body {
     margin: 0;
     padding: 20px;
     text-align: center;
-    /* background-image: url('assets/fondo_internado.jpg'); */ /* Descomenta si agregas imagen */
-    /* background-size: cover; */
 }
 
 #game-container {
@@ -17,7 +15,7 @@ body {
     border-radius: 10px;
 }
 
-h1 { color: #ff0000; } /* Rojo para drama */
+h1 { color: #ff0000; }
 
 button {
     background: #333;
@@ -28,7 +26,6 @@ button {
     cursor: pointer;
     border-radius: 5px;
 }
-
 button:hover { background: #ff0000; }
 
 select { 
@@ -53,6 +50,38 @@ select {
 
 .hidden { display: none; }
 
-img { max-width: 100%; height: auto; margin: 10px 0; }
-
 .action-section { margin: 10px 0; }
+
+/* ----- ÁREA VISUAL ----- */
+#visual-area {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    margin-bottom: 10px;
+}
+
+#scene-image {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.9;
+    z-index: 0;
+    border-radius: 10px;
+}
+
+.overlay-right {
+    position: absolute;
+    right: 20px;
+    bottom: 10px;
+    height: 220px;
+    z-index: 2;
+}
+
+.overlay-left {
+    position: absolute;
+    left: 20px;
+    bottom: 10px;
+    height: 100px;
+    z-index: 3;
+}

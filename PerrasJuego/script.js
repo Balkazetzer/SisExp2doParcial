@@ -1,202 +1,226 @@
-// Listas base
+// ====================
+// CONFIGURACIÓN
+// ====================
+
 const culpablesPosibles = ["Sofía", "Iris", "Ana Cecy", "Diana", "Andrea"];
 const locacionesPosibles = ["Baños", "Dirección", "Patio de juegos", "Salón de clases", "Escaleras"];
 const armasPosibles = ["Cutter", "Pastillas abortivas", "Bastón", "Pastillas para dormir", "Ganchito"];
 
-// Coartadas y diálogos
-const coartadasInocentes = { "Sofía":"Salón de clases","Iris":"Patio de juegos","Ana Cecy":"Dirección","Diana":"Baños","Andrea":"Escaleras" };
-const coartadasFalsas = { "Sofía":"Patio de juegos","Iris":"Escaleras","Ana Cecy":"Salón de clases","Diana":"Dirección","Andrea":"Baños" };
-const dialogosBase = {
-    "Sofía":"sisea mientras saca el arma, celosa por los chismes de María.",
-    "Iris":"ofrece un vaso con una sonrisa falsa, silenciando el secreto del embarazo.",
-    "Ana Cecy":"balancea el arma en un 'juego' agresivo, gritando '¡Corre, perra!'",
-    "Diana":"desliza el arma en la bebida, susurrando 'Duerme y olvídate de mis secretos.'",
-    "Andrea":"espera en la sombra, murmurando 'Devuélveme lo que robaste', antes de empujar."
+// Rutas a los sprites e imágenes
+const spritePaths = {
+    "Sofía": "assets/sofia.png",
+    "Iris": "assets/iris.png",
+    "Ana Cecy": "assets/anac.png",
+    "Diana": "assets/diana.png",
+    "Andrea": "assets/andrea.png"
 };
 
-// Casos predefinidos
-const casosPredefinidos = [];
-let count = 0;
-for(let i=0;i<5 && count<25;i++){
-    for(let j=0;j<5 && count<25;j++){
-        casosPredefinidos.push({culpable: culpablesPosibles[i], locacion: locacionesPosibles[j], arma: armasPosibles[(i+j)%5]});
-        count++;
-    }
-}
+const scenePaths = {
+    "Baños": "assets/banyos.jpg",
+    "Dirección": "assets/direcc.jpg",
+    "Patio de juegos": "assets/patio.jpg",
+    "Salón de clases": "assets/aula.jpg",
+    "Escaleras": "assets/escalera.jpg"
+};
 
-// Variables globales
+// ====================
+// VARIABLES
+// ====================
 let casoReal = null;
 let currentTurn = 1;
 let maxTurns = 10;
-let alumnaInterrogada = null; // Alumna que ya fue interrogada
-let mochilasRevisadas = []; // Armas ya encontradas en mochilas (descartadas)
+let alumnaInterrogada = null;
+let camaraUsada = false;
+let mochilasRevisadas = [];
+let armasDescartadas = [];
+let armaAsesina = null;
 
-// INICIAR JUEGO
-function startGame(){
-    const idxCaso = Math.floor(Math.random()*casosPredefinidos.length);
-    casoReal = casosPredefinidos[idxCaso];
-    console.log("Caso secreto:", casoReal);
+// ====================
+// ELEMENTOS DOM
+// ====================
+const output = document.getElementById('output');
+const turnDisplay = document.getElementById('current-turn');
+const sceneImage = document.getElementById('scene-image');
+const studentImage = document.getElementById('student-image');
+const miniStudentImage = document.getElementById('mini-student-image');
+
+// ====================
+// FUNCIONES DEL JUEGO
+// ====================
+function startGame() {
+    casoReal = {
+        culpable: random(culpablesPosibles),
+        locacion: random(locacionesPosibles),
+        arma: random(armasPosibles)
+    };
+    armaAsesina = casoReal.arma;
+    currentTurn = 1;
+    mochilasRevisadas = [];
+    armasDescartadas = [];
+    alumnaInterrogada = null;
+    camaraUsada = false;
+
     document.getElementById('intro').classList.add('hidden');
     document.getElementById('game').classList.remove('hidden');
-    currentTurn = 1;
-    alumnaInterrogada = null;
-    mochilasRevisadas = [];
-    document.getElementById('output').textContent = '';
-    updateTurnInfo();
-    appendOutput("Partida iniciada. ¡Deduce con cuidado!");
+    output.textContent = "La partida ha comenzado. Interroga a una alumna para iniciar.";
+    updateTurn();
 }
 
-// ACTUALIZAR TURNO
-function updateTurnInfo(){
-    document.getElementById('current-turn').textContent = currentTurn;
-    if(currentTurn>maxTurns){
-        document.getElementById('turn-info').innerHTML = '<h3>¡Turnos agotados! Da tu veredicto ahora.</h3>';
-    } else {
-        document.getElementById('turn-info').innerHTML = '';
-    }
+function updateTurn() {
+    turnDisplay.textContent = currentTurn;
 }
 
-// APPEND OUTPUT
-function appendOutput(text){
-    const output = document.getElementById('output');
-    output.textContent += text + '\n\n';
+function random(array) {
+    return array[Math.floor(Math.random() * array.length)];
+}
+
+function appendOutput(text) {
+    output.textContent += "\n" + text;
     output.scrollTop = output.scrollHeight;
 }
 
-// MOSTRAR IMAGEN DINÁMICA
-function showImage(src){
-    const img = document.getElementById('dynamic-image');
-    if(src && src!==''){
-        img.src = src;
-        img.classList.remove('hidden');
-    } else {
-        img.classList.add('hidden');
-    }
-}
-
-// INTERROGAR ALUMNA
-function showInterrogation(){
-    document.getElementById('input-area').innerHTML=`
+// ----- Interrogatorio -----
+function showInterrogation() {
+    document.getElementById('input-area').innerHTML = `
         <select id="alumna-select">
             <option value="">Selecciona alumna</option>
-            ${culpablesPosibles.map(a=>`<option value="${a}">${a}</option>`).join('')}
+            ${culpablesPosibles.map(a => `<option value="${a}">${a}</option>`).join('')}
         </select>
         <button onclick="interrogate()">Interrogar</button>
         <button onclick="backToActions()">Cancelar</button>
     `;
-    document.getElementById('input-area').classList.remove('hidden');
-    document.getElementById('actions').classList.add('hidden');
+    toggleInputs(true);
 }
 
-// FUNCION INTERROGAR
-function interrogate(){
+function interrogate() {
     const alumna = document.getElementById('alumna-select').value;
-    if(!alumna){ appendOutput('Selecciona una alumna válida.'); return; }
-    alumnaInterrogada = alumna; // Guardamos la alumna interrogada
-    // Mostrar imagen de alumna (solo espacio reservado)
-    showImage(`assets/${alumna.toLowerCase().replace(/ /g,'_')}.png`);
-    const esCulpable = alumna===casoReal.culpable;
-    let coartada = esCulpable ? coartadasFalsas[alumna] : coartadasInocentes[alumna];
-    appendOutput(`${alumna}: '${esCulpada ? "Estaba en "+coartada+", sola." : "Estaba en "+coartada+", estudiando/charlando."}'\nNota: La cámara en ${coartada} verifica su coartada.`);
+    if (!alumna) { appendOutput("Selecciona una alumna válida."); return; }
+
+    alumnaInterrogada = alumna;
+    camaraUsada = false;
+
+    // Mostrar sprite de alumna
+    studentImage.src = spritePaths[alumna];
+    studentImage.classList.remove('hidden');
+    sceneImage.classList.add('hidden');
+    miniStudentImage.classList.add('hidden');
+
+    appendOutput(`${alumna} fue interrogada. Su actitud parece ${["nerviosa", "tranquila", "evasiva"][Math.floor(Math.random()*3)]}.`);
     nextTurn();
     backToActions();
 }
 
-// MOSTRAR CAMARAS (SOLO SI HAY ALUMNA INTERROGADA)
-function showCameras(){
-    if(!alumnaInterrogada){
-        alert('Primero debes interrogar a una alumna antes de revisar cámaras.');
+// ----- Revisar cámaras -----
+function showCameras() {
+    if (!alumnaInterrogada) {
+        alert("Primero debes interrogar a una alumna.");
         return;
     }
-    document.getElementById('input-area').innerHTML=`
+    if (camaraUsada) {
+        appendOutput("Ya revisaste una cámara para esta alumna. Interroga a otra antes de revisar otra cámara.");
+        return;
+    }
+
+    document.getElementById('input-area').innerHTML = `
         <select id="locacion-cam-select">
             <option value="">Selecciona locación</option>
-            ${locacionesPosibles.map(l=>`<option value="${l}">${l}</option>`).join('')}
+            ${locacionesPosibles.map(l => `<option value="${l}">${l}</option>`).join('')}
         </select>
         <button onclick="checkCamera()">Revisar</button>
         <button onclick="backToActions()">Cancelar</button>
     `;
-    document.getElementById('input-area').classList.remove('hidden');
-    document.getElementById('actions').classList.add('hidden');
-    // Espacio para mostrar imagen de la cámara
-    showImage(''); 
+    toggleInputs(true);
 }
 
-// FUNCION REVISAR CAMARA
-function checkCamera(){
-    const locacion = document.getElementById('locacion-cam-select').value;
-    if(!locacion){ appendOutput('Selecciona una locación válida.'); return; }
-    if(locacion===casoReal.locacion){
-        appendOutput(`Cámaras de ${locacion}: Interferencia estática. Algo pasó aquí.`);
-    } else {
-        let visibles = [];
-        culpablesPosibles.forEach(a=>{
-            if(a!==casoReal.culpable && coartadasInocentes[a]===locacion) visibles.push(a);
-        });
-        let mensaje = `Cámaras de ${locacion}: Movimiento normal. `;
-        mensaje += visibles.length>0?`Se ve a ${visibles.join(', ')} allí.`:'Nada sospechoso.';
-        appendOutput(mensaje);
-    }
+function checkCamera() {
+    const loc = document.getElementById('locacion-cam-select').value;
+    if (!loc) { appendOutput("Selecciona una locación válida."); return; }
+
+    sceneImage.src = scenePaths[loc];
+    sceneImage.classList.remove('hidden');
+
+    miniStudentImage.src = spritePaths[alumnaInterrogada];
+    miniStudentImage.classList.remove('hidden');
+
+    camaraUsada = true;
+    appendOutput(`Revisas la cámara en ${loc}. Se observa a ${alumnaInterrogada} cerca del área.`);
+
     nextTurn();
     backToActions();
 }
 
-// REVISAR MOCHILAS
-function checkBackpacks(){
-    if(mochilasRevisadas.length>=armasPosibles.length-1){
+// ----- Revisar mochilas -----
+function checkBackpacks() {
+    if (mochilasRevisadas.length >= armasPosibles.length - 1) {
         appendOutput("Ya revisaste todas las mochilas posibles. No hay más armas descartables.");
         return;
     }
-    // Elegir arma aleatoria que no sea el arma real y que no haya salido antes
-    const armasDescartables = armasPosibles.filter(a=>a!==casoReal.arma && !mochilasRevisadas.includes(a));
-    const armaEncontrada = armasDescartables[Math.floor(Math.random()*armasDescartables.length)];
-    mochilasRevisadas.push(armaEncontrada);
-    appendOutput(`Revisas mochilas: Encuentras ${armaEncontrada}.`);
+
+    const disponibles = armasPosibles.filter(a => a !== armaAsesina && !armasDescartadas.includes(a));
+    if (disponibles.length === 0) {
+        appendOutput("Ya no hay más objetos por revisar.");
+        return;
+    }
+
+    const encontrada = random(disponibles);
+    mochilasRevisadas.push(encontrada);
+    armasDescartadas.push(encontrada);
+    appendOutput(`Revisas una mochila y encuentras ${encontrada}.`);
+
     nextTurn();
 }
 
-// VEREDICTO
-function showVerdict(){
+// ----- Veredicto -----
+function showVerdict() {
     document.getElementById('game').classList.add('hidden');
     document.getElementById('verdict-area').classList.remove('hidden');
 }
 
-function submitVerdict(){
+function submitVerdict() {
     const culpable = document.getElementById('culpable-select').value;
-    const locacion = document.getElementById('locacion-select').value;
+    const loc = document.getElementById('locacion-select').value;
     const arma = document.getElementById('arma-select').value;
-    if(!culpable || !locacion || !arma){ alert('Selecciona todas las opciones.'); return; }
-    endGame(culpable===casoReal.culpable && locacion===casoReal.locacion && arma===casoReal.arma, culpable===casoReal.culpable && locacion===casoReal.locacion && arma===casoReal.arma?'¡Correcto!':'Incorrecto.'); 
+
+    if (!culpable || !loc || !arma) {
+        alert("Selecciona todas las opciones.");
+        return;
+    }
+
+    const correcto = (culpable === casoReal.culpable && loc === casoReal.locacion && arma === casoReal.arma);
+    endGame(correcto, correcto ? "¡Has resuelto el caso!" : "Veredicto incorrecto.");
 }
 
-function backToGame(){
-    document.getElementById('verdict-area').classList.add('hidden');
-    document.getElementById('game').classList.remove('hidden');
+// ----- Gestión de interfaz -----
+function backToActions() {
+    toggleInputs(false);
 }
 
-function backToActions(){
-    document.getElementById('input-area').classList.add('hidden');
-    document.getElementById('actions').classList.remove('hidden');
+function toggleInputs(show) {
+    document.getElementById('input-area').classList.toggle('hidden', !show);
+    document.getElementById('actions').classList.toggle('hidden', show);
 }
 
-function nextTurn(){
+function nextTurn() {
     currentTurn++;
-    updateTurnInfo();
-    if(currentTurn>maxTurns){
-        appendOutput('¡Turnos agotados! Da tu veredicto.');
+    updateTurn();
+    if (currentTurn > maxTurns) {
+        appendOutput("¡Turnos agotados! Da tu veredicto.");
         showVerdict();
     }
-    backToActions();
 }
 
-function exitGame(){ endGame(false,'Has salido del juego.'); }
+function exitGame() {
+    endGame(false, "Has salido del juego.");
+}
 
-function endGame(win,msg){
+function endGame(win, msg) {
     document.getElementById('game').classList.add('hidden');
     document.getElementById('verdict-area').classList.add('hidden');
     document.getElementById('end-game').classList.remove('hidden');
-    document.getElementById('end-title').textContent = win?'¡Ganaste!':'Juego Terminado';
+    document.getElementById('end-title').textContent = win ? "¡Ganaste!" : "Juego Terminado";
     document.getElementById('end-message').textContent = msg;
 }
 
-function restartGame(){ location.reload(); }
+function restartGame() {
+    location.reload();
+}

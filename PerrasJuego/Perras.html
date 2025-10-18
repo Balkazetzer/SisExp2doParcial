@@ -2,71 +2,74 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Clue: Perras - Simulador de Misterio</title>
+    <title>Internado: Caso del Misterio</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div id="game-container">
-        <h1>Clue: Perras</h1>
-        <p>María del Mar ha sido asesinada en el internado. Deduce quién lo hizo, dónde y con qué en máximo 10 turnos.</p>
-        <img id="dynamic-image" src="" alt="Imagen dinámica" class="hidden">
+        <h1>Internado: El Misterio del Asesinato</h1>
 
+        <!-- INTRO -->
         <div id="intro">
-            <button onclick="startGame()">Iniciar Partida</button>
+            <p>Descubre quién es la culpable, dónde ocurrió el crimen y con qué arma. 
+            Tienes 10 turnos antes de emitir tu veredicto.</p>
+            <button onclick="startGame()">Iniciar partida</button>
         </div>
 
+        <!-- JUEGO PRINCIPAL -->
         <div id="game" class="hidden">
-            <div id="turn-info"></div>
-            <div id="actions">
-                <h3>Acciones (Turno <span id="current-turn">1</span>/10):</h3>
-                <div class="action-section">
-                    <button onclick="showInterrogation()">1. Interrogar Alumna</button>
-                </div>
-                <div class="action-section">
-                    <button onclick="showCameras()">2. Revisar Cámaras</button>
-                </div>
-                <div class="action-section">
-                    <button onclick="checkBackpacks()">3. Revisar Mochilas</button>
-                </div>
-                <div class="action-section">
-                    <button onclick="showVerdict()">4. Dar Veredicto</button>
-                </div>
-                <div class="action-section">
-                    <button onclick="exitGame()">5. Salir</button>
-                </div>
+            <div id="turn-info">
+                Turno actual: <span id="current-turn">1</span> / 10
             </div>
-            <div id="input-area" class="hidden">
+
+            <!-- Contenedor visual de imágenes dinámicas -->
+            <div id="visual-area">
+                <img id="scene-image" class="hidden" src="" alt="Escenario actual">
+                <img id="student-image" class="hidden overlay-right" src="" alt="Alumna interrogada">
+                <img id="mini-student-image" class="hidden overlay-left" src="" alt="Mini alumna">
             </div>
+
             <div id="output"></div>
+
+            <div id="actions" class="action-section">
+                <button onclick="showInterrogation()">Interrogar alumna</button>
+                <button onclick="showCameras()">Revisar cámaras</button>
+                <button onclick="checkBackpacks()">Revisar mochilas</button>
+                <button onclick="showVerdict()">Dar veredicto</button>
+                <button onclick="exitGame()">Salir</button>
+            </div>
+
+            <div id="input-area" class="hidden"></div>
         </div>
 
+        <!-- VEREDICTO -->
         <div id="verdict-area" class="hidden">
-            <h3>Tu Veredicto:</h3>
+            <h2>Dar veredicto</h2>
             <select id="culpable-select">
-                <option value="">Selecciona culpable</option>
+                <option value="">Culpable</option>
                 <option value="Sofía">Sofía</option>
                 <option value="Iris">Iris</option>
                 <option value="Ana Cecy">Ana Cecy</option>
                 <option value="Diana">Diana</option>
                 <option value="Andrea">Andrea</option>
-            </select><br>
+            </select>
             <select id="locacion-select">
-                <option value="">Selecciona locación</option>
+                <option value="">Lugar</option>
                 <option value="Baños">Baños</option>
                 <option value="Dirección">Dirección</option>
                 <option value="Patio de juegos">Patio de juegos</option>
                 <option value="Salón de clases">Salón de clases</option>
                 <option value="Escaleras">Escaleras</option>
-            </select><br>
+            </select>
             <select id="arma-select">
-                <option value="">Selecciona arma</option>
+                <option value="">Arma</option>
                 <option value="Cutter">Cutter</option>
                 <option value="Pastillas abortivas">Pastillas abortivas</option>
                 <option value="Bastón">Bastón</option>
                 <option value="Pastillas para dormir">Pastillas para dormir</option>
                 <option value="Ganchito">Ganchito</option>
-            </select><br>
+            </select>
+            <br><br>
             <button onclick="submitVerdict()">Confirmar</button>
             <button onclick="backToGame()">Volver</button>
         </div>
@@ -74,7 +77,7 @@
         <div id="end-game" class="hidden">
             <h2 id="end-title"></h2>
             <p id="end-message"></p>
-            <button onclick="restartGame()">Nueva Partida</button>
+            <button onclick="restartGame()">Reiniciar</button>
         </div>
     </div>
 
