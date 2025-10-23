@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Adivina Quién - Animales</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="game-container">
+        <h1>Adivina Quién: Animales</h1>
+
+        <div id="question-area"></div>
+
+        <div id="buttons">
+            <button id="yes-btn">Sí</button>
+            <button id="no-btn">No</button>
+        </div>
+
+        <div id="learn-area" class="hidden">
+            <h2>¡No adiviné! Enséñame un nuevo animal</h2>
+            <input type="text" id="new-animal" placeholder="Nombre del animal">
+            <input type="text" id="new-attributes" placeholder="Atributos (ej: vuela,peludo,grande)">
+            <button id="save-animal">Guardar</button>
+        </div>
+
+        <div id="restart-area" class="hidden">
+            <button id="restart-btn">Reiniciar juego</button>
+        </div>
+
+        <p id="message"></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

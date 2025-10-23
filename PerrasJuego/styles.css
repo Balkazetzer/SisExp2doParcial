@@ -1,87 +1,137 @@
 body {
-    font-family: 'Courier New', monospace;
+    font-family: "Segoe UI", sans-serif;
     background-color: #111;
-    color: #878639;
+    color: #f1f1f1;
     margin: 0;
-    padding: 20px;
-    text-align: center;
+    padding: 0;
+    display: flex;
+    justify-content: center;
 }
 
 #game-container {
-    max-width: 800px;
-    margin: 0 auto;
-    background: rgba(0,0,0,0.8);
-    padding: 20px;
+    width: 900px;
+    background-color: #1b1b1b;
     border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
 }
 
-h1 { color: #ff0000; }
-
-button {
-    background: #333;
-    color: #fff;
-    border: 1px solid #ff0000;
-    padding: 10px;
-    margin: 5px;
-    cursor: pointer;
-    border-radius: 5px;
-}
-button:hover { background: #ff0000; }
-
-select { 
-    padding: 5px; 
-    margin: 5px; 
-    width: 200px; 
-    background: #333; 
-    color: #fff; 
-    border: 1px solid #ff0000; 
-    border-radius: 5px;
+h1, h2 {
+    text-align: center;
+    color: #ff6f6f;
 }
 
-#output { 
-    text-align: left; 
-    margin: 20px 0; 
-    padding: 10px;
-    background: #222;
-    border-radius: 5px;
-    min-height: 200px;
-    white-space: pre-wrap;
-}
-
-.hidden { display: none; }
-
-.action-section { margin: 10px 0; }
-
-/* ----- ÁREA VISUAL ----- */
+/* --------- ÁREA VISUAL --------- */
 #visual-area {
     position: relative;
     width: 100%;
-    height: 300px;
-    margin-bottom: 10px;
+    height: 350px;
+    background-color: #000;
+    border: 2px solid #444;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 15px;
 }
 
+/* Imagen de escenario */
 #scene-image {
-    position: relative;
+    position: absolute;
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.9;
-    z-index: 0;
-    border-radius: 10px;
+    top: 0;
+    left: 0;
+    transition: opacity 0.5s ease-in-out;
 }
 
-.overlay-right {
+/* Alumna interrogada (lado derecho) */
+#student-image {
     position: absolute;
     right: 20px;
-    bottom: 10px;
-    height: 220px;
-    z-index: 2;
+    bottom: 0;
+    width: 220px;
+    height: auto;
+    max-height: 90%;
+    object-fit: contain;
+    transition: transform 0.3s ease-in-out;
 }
 
-.overlay-left {
+/* Miniatura de alumna (al revisar cámara) */
+#mini-student-image {
     position: absolute;
     left: 20px;
     bottom: 10px;
-    height: 100px;
-    z-index: 3;
+    width: 120px;
+    height: auto;
+    max-height: 70%;
+    object-fit: contain;
+    opacity: 0.9;
+}
+
+/* --------- CUADRO DE TEXTO --------- */
+#output {
+    background-color: #000;
+    border: 2px solid #444;
+    border-radius: 10px;
+    padding: 10px;
+    height: 150px;
+    overflow-y: auto;
+    white-space: pre-line;
+    font-size: 15px;
+    margin-bottom: 15px;
+}
+
+/* --------- BOTONES Y ACCIONES --------- */
+button {
+    background-color: #ff6f6f;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 16px;
+    padding: 8px 14px;
+    margin: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #ff5050;
+}
+
+select {
+    background-color: #222;
+    color: #fff;
+    border-radius: 6px;
+    padding: 6px;
+    border: 1px solid #555;
+}
+
+.hidden {
+    display: none;
+}
+
+/* --------- PANEL FINAL --------- */
+#end-game {
+    text-align: center;
+}
+
+#end-game button {
+    background-color: #ff6f6f;
+}
+
+/* --------- AJUSTES RESPONSIVOS --------- */
+@media (max-width: 768px) {
+    #game-container {
+        width: 95%;
+        padding: 15px;
+    }
+
+    #student-image {
+        width: 160px;
+    }
+
+    #mini-student-image {
+        width: 90px;
+    }
 }
